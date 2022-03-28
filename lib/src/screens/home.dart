@@ -1,14 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:pixbit/src/settings/settings_controller.dart';
 import 'package:pixbit/src/utils/constants.dart';
 import 'package:pixbit/src/utils/router.dart';
+import 'package:provider/provider.dart';
 
 import '../models/users.dart';
 import '../network/api.dart';
 
 class Home extends StatefulWidget {
-  final SettingsController controller;
-  const Home({Key? key, required this.controller}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -17,8 +19,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   TextEditingController _editingController = new TextEditingController();
   bool isloading = true;
-  late Users user;
+  Users? user;
   String searchQuery = '';
+  String? temp;
   @override
   void initState() {
     // TODO: implement initState
@@ -28,7 +31,8 @@ class _HomeState extends State<Home> {
 
   init() async {
     try {
-      user = await Api(token: widget.controller.token).users();
+      log(context.read<SettingsController>().token.toString());
+      user = await Api(token: context.read<SettingsController>().token).users();
     } finally {
       setState(() {
         isloading = false;
@@ -37,10 +41,13 @@ class _HomeState extends State<Home> {
   }
 
   List<UsersDataData?> getStudentList() {
-    return user.data!.data!
+    user!.data!.data!.sort((a, b) =>
+        a!.firstName!.toLowerCase().compareTo(b!.firstName!.toLowerCase()));
+    var users = user!.data!.data!
         .where((s) =>
             s!.firstName!.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
+    return users;
   }
 
   @override
@@ -99,11 +106,12 @@ class _HomeState extends State<Home> {
                   Expanded(
                       child: ListView.separated(
                     itemBuilder: (c, i) {
+                      if (i == 0) return SizedBox.shrink();
                       return ListTile(
                         onTap: () {
                           Navigator.pushNamed(
                               context, RouterHelper.detailsRoute,
-                              arguments: user.data!.data![i]);
+                              arguments: user!.data!.data![i]);
                         },
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(
@@ -113,9 +121,37 @@ class _HomeState extends State<Home> {
                       );
                     },
                     separatorBuilder: (c, i) {
-                      return Divider();
+                      if (i == getStudentList().length) {
+                        return SizedBox.shrink();
+                      } else if (temp !=
+                          getStudentList()[i + 1]!
+                              .firstName!
+                              .characters
+                              .first
+                              .toLowerCase()) {
+                        temp = getStudentList()[i + 1]!
+                            .firstName!
+                            .characters
+                            .first
+                            .toLowerCase();
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(getStudentList()[i + 1]!
+                                .firstName!
+                                .characters
+                                .first
+                                .toLowerCase()),
+                            Divider(
+                              color: Colors.black,
+                              thickness: 1,
+                            ),
+                          ],
+                        );
+                      } else
+                        return Divider();
                     },
-                    itemCount: getStudentList().length,
+                    itemCount: getStudentList().length + 1,
                   ))
                 ],
               ));

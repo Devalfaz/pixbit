@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:pixbit/src/screens/auth_screen.dart';
 import 'package:pixbit/src/utils/router.dart';
-
+import 'package:provider/provider.dart';
 import 'settings/settings_controller.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
   const MyApp({
     Key? key,
-    required this.settingsController,
   }) : super(key: key);
-
-  final SettingsController settingsController;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +18,7 @@ class MyApp extends StatelessWidget {
     // The AnimatedBuilder Widget listens to the SettingsController for changes.
     // Whenever the user updates their settings, the MaterialApp is rebuilt.
     return AnimatedBuilder(
-      animation: settingsController,
+      animation: context.read<SettingsController>(),
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
           // Providing a restorationScopeId allows the Navigator built by the
@@ -57,16 +53,14 @@ class MyApp extends StatelessWidget {
           // SettingsController to display the correct theme.
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
-          home: AuthScreen(controller: settingsController),
-
+          themeMode: context.read<SettingsController>().themeMode,
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
           onGenerateRoute: RouterHelper.generateRoute,
           onUnknownRoute: RouterHelper.onUnKnownRoute,
-          initialRoute: settingsController.token != null
-              ? RouterHelper.homeRoute
-              : RouterHelper.onBoardRoute,
+          // initialRoute: context.read<SettingsController>().token != null
+          //     ? RouterHelper.homeRoute
+          //     : RouterHelper.onBoardRoute,
           title: "PixBit",
         );
       },

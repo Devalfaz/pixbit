@@ -10,6 +10,7 @@ environment:
   sdk: ">=2.16.0-134.5.beta <3.0.0"
 
 dependencies:
+  provider: ^6.0.2
   dio: ^4.0.4
   flutter:
     sdk: flutter

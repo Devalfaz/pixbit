@@ -20,16 +20,11 @@ class RouterHelper {
       case onBoardRoute:
         return MaterialPageRoute(builder: (_) => const OnBoard());
       case loginRoute:
-        return MaterialPageRoute(
-            builder: (_) => AuthScreen(
-                  controller: settings.arguments as SettingsController,
-                ));
+        return MaterialPageRoute(builder: (_) => const AuthScreen());
       case registerRoute:
         return MaterialPageRoute(builder: (_) => const Register());
       case homeRoute:
-        return MaterialPageRoute(
-            builder: (_) =>
-                Home(controller: settings.arguments as SettingsController));
+        return MaterialPageRoute(builder: (_) => const Home());
       case detailsRoute:
         return MaterialPageRoute(
             builder: (_) => Details(data: settings.arguments as UsersDataData));

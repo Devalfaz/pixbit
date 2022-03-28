@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pixbit/src/network/api.dart';
 import 'package:pixbit/src/settings/settings_controller.dart';
 import 'package:pixbit/src/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 import '../models/response_data.dart';
 import '../models/user_model.dart';
@@ -11,9 +12,9 @@ import '../utils/router.dart';
 import '../utils/theme.dart';
 
 class AuthScreen extends StatefulWidget {
-  final SettingsController controller;
-
-  const AuthScreen({Key? key, required this.controller}) : super(key: key);
+  const AuthScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -41,10 +42,13 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       LoginData response = await pixBitAPI.login(
           _usernameController.text, _passwordController.text);
-
-      widget.controller.updateUserToken(response.data?.accessToken);
-      Navigator.pushReplacementNamed(context, RouterHelper.homeRoute,
-          arguments: widget.controller);
+      context
+          .read<SettingsController>()
+          .updateUserToken(response.data?.accessToken);
+      Navigator.pushReplacementNamed(
+        context,
+        RouterHelper.homeRoute,
+      );
       // UserModel? user = response.data;
 
       // if (response.status == "ERROR") {
