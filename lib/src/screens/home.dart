@@ -151,7 +151,7 @@ class _HomeState extends State<Home> {
                       } else
                         return Divider();
                     },
-                    itemCount: getStudentList().length + 1,
+                    itemCount: getStudentList().length,
                   ))
                 ],
               ));
