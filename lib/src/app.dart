@@ -64,6 +64,9 @@ class MyApp extends StatelessWidget {
           // Flutter web url navigation and deep linking.
           onGenerateRoute: RouterHelper.generateRoute,
           onUnknownRoute: RouterHelper.onUnKnownRoute,
+          initialRoute: settingsController.token != null
+              ? RouterHelper.homeRoute
+              : RouterHelper.onBoardRoute,
           title: "PixBit",
         );
       },
